@@ -1,3 +1,65 @@
+
+CREATE DATABASE Au_db CHARACTER SET utf8 COLLATE utf8_general_ci;
+
+
+create table aa_transactions (
+	id INT UNSIGNED primary key auto_increment,
+	user_id INT UNSIGNED not null,
+	brand_to_type_id INT UNSIGNED not null,
+	tr_year SMALLINT UNSIGNED not null ,
+	tr_month TINYINT UNSIGNED not null ,
+	tr_day TINYINT UNSIGNED not null ,
+	region_id INT not null,
+	amount_of_units INT not null
+);
+
+
+
+INSERT INTO aa_transactions (user_id,brand_to_type_id,tr_year,tr_month,tr_day,region_id,amount_of_units)
+ VALUES ('1','1','2020','1','1','1','150'),('1','2','2020','1','1','1','77'),('1','3','2020','1','1','1','44'),('1','4','2020','1','1','1','55'),('1','5','2020','1','1','1','66'),('1','1','2020','1','2','1','134'),('1','2','2020','1','2','1','66'),('1','1','2019','12','1','1','130'),('1','2','2019','12','2','1','99'),('1','3','2019','12','1','1','210');
+
+
+create table aa_vehicle_type(
+ 	id INT UNSIGNED primary key auto_increment,
+	title varchar(100) not null);
+INSERT INTO aa_vehicle_type (title) VALUES('Cars'),('LCV');
+
+
+create table aa_brands(
+ 	id INT UNSIGNED primary key auto_increment,
+	name varchar(100) not null);
+
+INSERT INTO aa_brands (name) VALUES('Toyota'),('Renault'),('Skoda'),('Mazda');
+
+create table aa_brand_to_vt (
+ 	id INT UNSIGNED primary key auto_increment,
+	brand_id INT UNSIGNED not null,
+	vt_id INT UNSIGNED not null);
+
+INSERT INTO aa_brand_to_vt (brand_id,vt_id) VALUES(1,1),(2,1),(3,2),(4,1),(3,1);
+
+create table aa_diagram (
+	id INT UNSIGNED primary key auto_increment,
+	dg_year SMALLINT UNSIGNED not null ,
+	dg_month TINYINT UNSIGNED not null ,
+	dg_day TINYINT UNSIGNED not null ,
+	vehicle_type_id varchar(100) not null,
+	amount_of_units INT UNSIGNED null,
+	dynamic_compared_to_previous_month float not null,
+	dynamic_compared_to_previous_year float not null
+);
+
+create table Volume_of_market (
+	id INT UNSIGNED primary key auto_increment,
+	year SMALLINT UNSIGNED not null ,
+	month TINYINT UNSIGNED not null ,
+	type_id INT UNSIGNED not null,
+	amount_of_units INT UNSIGNED null
+);
+
+INSERT INTO Volume_of_market (year,month,type_id,amount_of_units) VALUES (2019,1,2,5295),(2019,2,2,5780),(2019,3,2,7355),(2019,4,2,6911),(2019,5,2,6710),(2019,6,2,6845),(2019,7,2,7730),(2019,8,2,8322),(2019,9,2,7092),(2019,10,2,9142),(2019,11,2,8870),(2019,12,2,9410),(2019,1,1,614),(2019,2,1,511),(2019,3,1,673),(2019,4,1,601),(2019,5,1,676),(2019,6,1,593),(2019,7,1,721),(2019,8,1,665),(2019,9,1,656),(2019,10,1,743),(2019,11,1,730),(2019,12,1,961);
+
+/****************************************/
 CREATE DATABASE Au_db CHARACTER SET utf8 COLLATE utf8_general_ci;
 
 create table Types (

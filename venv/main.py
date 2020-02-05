@@ -365,7 +365,6 @@ if __name__ == "__main__":
 
         Autocon_database.commit()
     except Exception as er:
-        pass
         logging(logfile_name, str(er))
     finally:
         Autocon_database.close()
