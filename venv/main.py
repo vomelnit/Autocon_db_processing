@@ -21,9 +21,9 @@ period_array = ["7 дней","14 дней","21 день","28 дней","меся
 
 
 
-def Get_typeid_from_sql_database(curs,type_name):
-        curs.execute("Select type_id from Types where (type_name = '{0}')".format(type_name))
-        return curs.fetchall()[0][0]
+# def Get_typeid_from_sql_database(curs,type_name):
+#         curs.execute("Select type_id from Types where (type_name = '{0}')".format(type_name))
+#         return curs.fetchall()[0][0]
 
 
 
@@ -36,22 +36,22 @@ def Get_dataframe_of_transaction_for_determined_month(curs,year,month,region):
     month_df.index = month_df.index + 1
     return month_df
 
-def Create_dataframe_of_brands_for_each_period (df,type,period_arr):
-    df2 = pandas.DataFrame(data =df[df.Type == n_type ].Brand.unique(),columns= ["Brand"] )
-    for nperiod in period_arr:
-        df2 = df2.join(df[(df["Type"] == type)&(df["Period"]==nperiod)][['Brand','Amount']].set_index('Brand'), on='Brand',how='left')
-        df2 = df2.rename(columns={'Amount':nperiod})
-    return df2
+# def Create_dataframe_of_brands_for_each_period (df,type,period_arr):
+#     df2 = pandas.DataFrame(data =df[df.Type == n_type ].Brand.unique(),columns= ["Brand"] )
+#     for nperiod in period_arr:
+#         df2 = df2.join(df[(df["Type"] == type)&(df["Period"]==nperiod)][['Brand','Amount']].set_index('Brand'), on='Brand',how='left')
+#         df2 = df2.rename(columns={'Amount':nperiod})
+#     return df2
 
-def Get_dataframe_of_resulting_rating_table(curs):
-    curs.execute(
-        "SELECT  brand_name,amount_for_7_days,amount_for_14_days,amount_for_21_days,amount_for_28_days,amount_for_month,type_name from Rating where (year =2020)&(month=1)"
-        " ORDER BY type_name,brand_name;")
-
-    month_df = pandas.DataFrame(data=curs.fetchall(), columns=['Brand', '7 дней', '14 дней', '21 день', '28 дней' , 'месяц','Type'])
-    month_df.index = month_df.index + 1
-    return month_df
-
+# def Get_dataframe_of_resulting_rating_table(curs):
+#     curs.execute(
+#         "SELECT  brand_name,amount_for_7_days,amount_for_14_days,amount_for_21_days,amount_for_28_days,amount_for_month,type_name from Rating where (year =2020)&(month=1)"
+#         " ORDER BY type_name,brand_name;")
+#
+#     month_df = pandas.DataFrame(data=curs.fetchall(), columns=['Brand', '7 дней', '14 дней', '21 день', '28 дней' , 'месяц','Type'])
+#     month_df.index = month_df.index + 1
+#     return month_df
+#
 def Get_dataframe_of_current_diagram_table(curs,year,month):
     curs.execute("SELECT  vehicle_type_id,dg_day,amount_of_units,dynamic_compared_to_previous_month,dynamic_compared_to_previous_year "
                  "from aa_diagram where (dg_year ={0})&(dg_month={1}) ORDER BY vehicle_type_id,dg_day;".format(year,month))
@@ -59,38 +59,38 @@ def Get_dataframe_of_current_diagram_table(curs,year,month):
     month_df = pandas.DataFrame(data=curs.fetchall(),columns=['Type','Period', 'Present_month_amount', 'Dynamic_by_month', 'Predicted_dynamic_prev_year' ])
     return month_df
 
-def Insert_dataframe_to_rating_table_throught_sql(curs,df,type_id,type_name):
+# def Insert_dataframe_to_rating_table_throught_sql(curs,df,type_id,type_name):
+#
+#     for currentRow in range(len(df)):
+#         RowList = []
+#         for Value in df.loc[currentRow]:
+#             if pandas.isna(Value):
+#                 RowList.append('NULL')
+#             elif type(Value) == numpy.float64:
+#                 Value = int(Value)
+#                 RowList.append(Value)
+#             else:
+#                 RowList.append(Value)
+#         sql_query = "INSERT INTO Rating (year, month,type_id ,type_name ,brand_id ,brand_name  ,amount_for_7_days ,	amount_for_14_days,	amount_for_21_days ,amount_for_28_days,	amount_for_month)" \
+#                     " VALUES ({0},{1},{2},'{3}',{4},'{5}',{6},{7},{8},{9},{10});".format(year,month,type_id,type_name,RowList[6],RowList[0],RowList[1],RowList[2],RowList[3],RowList[4],RowList[5])
+#         curs.execute(sql_query)
 
-    for currentRow in range(len(df)):
-        RowList = []
-        for Value in df.loc[currentRow]:
-            if pandas.isna(Value):
-                RowList.append('NULL')
-            elif type(Value) == numpy.float64:
-                Value = int(Value)
-                RowList.append(Value)
-            else:
-                RowList.append(Value)
-        sql_query = "INSERT INTO Rating (year, month,type_id ,type_name ,brand_id ,brand_name  ,amount_for_7_days ,	amount_for_14_days,	amount_for_21_days ,amount_for_28_days,	amount_for_month)" \
-                    " VALUES ({0},{1},{2},'{3}',{4},'{5}',{6},{7},{8},{9},{10});".format(year,month,type_id,type_name,RowList[6],RowList[0],RowList[1],RowList[2],RowList[3],RowList[4],RowList[5])
-        curs.execute(sql_query)
-
-def Upload_dataframe_to_rating_table_throught_sql(curs,df,type_id,type_name):
-
-    for currentRow in range(len(df)):
-        RowList = []
-        for Value in df.loc[currentRow]:
-            if pandas.isna(Value):
-                RowList.append('NULL')
-            elif type(Value) == numpy.float64:
-                Value = int(Value)
-                RowList.append(Value)
-            else:
-                RowList.append(Value)
-        sql_query = "Update Rating SET amount_for_7_days = {0} ,amount_for_14_days = {1},	amount_for_21_days = {2} ,amount_for_28_days = {3},	amount_for_month = {4} " \
-                    "where (year = {5})&(month = {6})& (type_id = {7})&( type_name = '{8}')&(brand_id = {9})" \
-                    "&(brand_name = '{10}');".format(RowList[1],RowList[2],RowList[3],RowList[4],RowList[5],year,month,type_id,type_name,RowList[6],RowList[0])
-        curs.execute(sql_query)
+# def Upload_dataframe_to_rating_table_throught_sql(curs,df,type_id,type_name):
+#
+#     for currentRow in range(len(df)):
+#         RowList = []
+#         for Value in df.loc[currentRow]:
+#             if pandas.isna(Value):
+#                 RowList.append('NULL')
+#             elif type(Value) == numpy.float64:
+#                 Value = int(Value)
+#                 RowList.append(Value)
+#             else:
+#                 RowList.append(Value)
+#         sql_query = "Update Rating SET amount_for_7_days = {0} ,amount_for_14_days = {1},	amount_for_21_days = {2} ,amount_for_28_days = {3},	amount_for_month = {4} " \
+#                     "where (year = {5})&(month = {6})& (type_id = {7})&( type_name = '{8}')&(brand_id = {9})" \
+#                     "&(brand_name = '{10}');".format(RowList[1],RowList[2],RowList[3],RowList[4],RowList[5],year,month,type_id,type_name,RowList[6],RowList[0])
+#         curs.execute(sql_query)
 
 
 
@@ -131,11 +131,11 @@ def Upload_dataframe_to_diagram_table_throught_sql(curs,df,year,month):
         curs.execute(sql_query)
 
 
-def Join_to_df_brand_id_from_sql_database(curs,df,type_id):
-    curs.execute("Select brand_id,name from Brands where (type_id = {0});".format(type_id))
-    brand_df = pandas.DataFrame(data=curs.fetchall(),columns=["brand_id","Brand"])
-    df = df.join (brand_df.set_index("Brand"), on = "Brand",how = 'left')
-    return df
+# def Join_to_df_brand_id_from_sql_database(curs,df,type_id):
+#     curs.execute("Select brand_id,name from Brands where (type_id = {0});".format(type_id))
+#     brand_df = pandas.DataFrame(data=curs.fetchall(),columns=["brand_id","Brand"])
+#     df = df.join (brand_df.set_index("Brand"), on = "Brand",how = 'left')
+#     return df
 
 
 def Split_df_to_insert_set_and_upload_set_return_list(df_for_split,df_of_existing_rows,param_list,type_name):

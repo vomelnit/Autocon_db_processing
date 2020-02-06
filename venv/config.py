@@ -1,6 +1,6 @@
 #Database data
 host="localhost"
-user="user"
+user="username"
 password="password"
 database="Ann_db"
 logfile_name = "Log_for_db_processing.txt"

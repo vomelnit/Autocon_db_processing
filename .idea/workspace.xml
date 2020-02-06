@@ -3,7 +3,8 @@
   <component name="ChangeListManager">
     <list default="true" id="57fe1e8d-3328-4776-a629-bc98b40b9959" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Autocon_db_script.sql" beforeDir="false" afterPath="$PROJECT_DIR$/Autocon_db_script.sql" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/venv/Log_for_script.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/venv/config.py" beforeDir="false" afterPath="$PROJECT_DIR$/venv/config.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/venv/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/venv/main.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />

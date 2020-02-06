@@ -1,0 +1,7 @@
+2020-02-06 17:40:29.111011: Wrong quantity of argv
+2020-02-06 17:46:18.724709: Problem with database connection1045 (28000): Access denied for user 'user'@'localhost' (using password: YES)
+2020-02-06 17:47:33.434755: name 'Get_dataframe_of_current_diagram_table' is not defined
+2020-02-06 17:47:33.435030: OK
+2020-02-06 17:48:03.633034: name 'Get_dataframe_of_current_diagram_table' is not defined
+2020-02-06 17:48:03.633264: OK
+2020-02-06 17:48:47.636873: OK
