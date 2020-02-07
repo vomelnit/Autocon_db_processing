@@ -5,3 +5,8 @@
 2020-02-06 17:48:03.633034: name 'Get_dataframe_of_current_diagram_table' is not defined
 2020-02-06 17:48:03.633264: OK
 2020-02-06 17:48:47.636873: OK
+2020-02-06 18:19:07.581083: Wrong quantity of argv
+2020-02-06 18:19:47.930932: Problem with database connectionname 'mysql' is not defined
+2020-02-07 12:01:23.575402: Problem with database connection1045 (28000): Access denied for user 'username'@'localhost' (using password: YES)
+2020-02-07 12:02:28.287453: OK
+2020-02-07 12:04:06.075067: OK

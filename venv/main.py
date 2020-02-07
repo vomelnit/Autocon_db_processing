@@ -268,11 +268,11 @@ if __name__ == "__main__":
 
         if (month != 1):
             previous_month_general_df = Get_dataframe_of_transaction_for_determined_month(cursor,year,month-1,region)
-            cursor.execute("select title,amount_of_units from Volume_of_market join aa_vehicle_type on aa_vehicle_type.id = Volume_of_market.type_id where (year = {0})&(month = {1});".format(year,month-1))
+            cursor.execute("select aa_vehicle_type.title,aa_real_sales.amount_of_units from aa_real_sales join aa_vehicle_type on aa_vehicle_type.id = aa_real_sales.vehicle_type_id where (dg_year = {0})&(dg_month = {1});".format(year,month-1))
             previous_month_volume_of_market = pandas.DataFrame(data=cursor.fetchall(), columns=["Type", "Volume_prev_month"])
         else:
             previous_month_general_df = Get_dataframe_of_transaction_for_determined_month(cursor, year-1, 12,region)
-            cursor.execute("select title,amount_of_units from Volume_of_market join aa_vehicle_type on aa_vehicle_type.id = Volume_of_market.type_id where (year = {0})&(month = {1});".format(year-1,12))
+            cursor.execute("select aa_vehicle_type.title,aa_real_sales.amount_of_units from aa_real_sales join aa_vehicle_type on aa_vehicle_type.id = aa_real_sales.vehicle_type_id where (dg_year = {0})&(dg_month = {1});".format(year-1,12))
             previous_month_volume_of_market = pandas.DataFrame(data=cursor.fetchall(),columns=["Type","Volume_prev_month"])
 
         if (previous_month_general_df.empty):
@@ -280,7 +280,7 @@ if __name__ == "__main__":
 
         else:
             try:
-                cursor.execute("select title,amount_of_units from Volume_of_market join aa_vehicle_type on aa_vehicle_type.id = Volume_of_market.type_id where (year = {0})&(month = {1});".format(year - 1, month))
+                cursor.execute("select aa_vehicle_type.title, aa_real_sales.amount_of_units from aa_real_sales join aa_vehicle_type on aa_vehicle_type.id = aa_real_sales.vehicle_type_id where (dg_year = {0})&(dg_month = {1});".format(year - 1, month))
                 previous_year_volume_of_market = pandas.DataFrame(data=cursor.fetchall(), columns=["Type", "Volume_prev_year"])
 
                 previous_month_volume_of_market = Add_sum_rows_of_units_by_period_to_df(df=previous_month_volume_of_market,colum_name_to_sum="Volume_prev_month")

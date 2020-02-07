@@ -1,7 +1,7 @@
 #Database data
 host="localhost"
 user="username"
-password="password"
+password="password%"
 database="Ann_db"
 logfile_name = "Log_for_db_processing.txt"
 
