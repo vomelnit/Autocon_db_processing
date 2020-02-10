@@ -109,7 +109,7 @@ def Insert_dataframe_to_diagram_table_throught_sql(curs,df,year,month):
 
         RowList[8]= int(RowList[8])
         sql_query = "INSERT INTO aa_diagram (dg_year, dg_month,dg_day,vehicle_type_id ,amount_of_units , dynamic_compared_to_previous_month ,dynamic_compared_to_previous_year,predicted_market_volume)" \
-                    " VALUES ({0},{1},'{2}','{3}',{4},{5},{6},{7});".format(year,month,RowList[1],RowList[0],RowList[2],RowList[5],RowList[9],RowLsit[8])
+                    " VALUES ({0},{1},'{2}','{3}',{4},{5},{6},{7});".format(year,month,RowList[1],RowList[0],RowList[2],RowList[5],RowList[9],RowList[8])
         curs.execute(sql_query)
 
 
