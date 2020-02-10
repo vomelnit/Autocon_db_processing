@@ -108,8 +108,8 @@ def Insert_dataframe_to_diagram_table_throught_sql(curs,df,year,month):
                 RowList.append(Value)
 
         RowList[8]= int(RowList[8])
-        sql_query = "INSERT INTO aa_diagram (dg_year, dg_month,dg_day,vehicle_type_id ,amount_of_units ,	dynamic_compared_to_previous_month ,dynamic_compared_to_previous_year)" \
-                    " VALUES ({0},{1},'{2}','{3}',{4},{5},{6});".format(year,month,RowList[1],RowList[0],RowList[2],RowList[8],RowList[9])
+        sql_query = "INSERT INTO aa_diagram (dg_year, dg_month,dg_day,vehicle_type_id ,amount_of_units , dynamic_compared_to_previous_month ,dynamic_compared_to_previous_year,predicted_market_volume)" \
+                    " VALUES ({0},{1},'{2}','{3}',{4},{5},{6},{7});".format(year,month,RowList[1],RowList[0],RowList[2],RowList[5],RowList[9],RowList[8])
         curs.execute(sql_query)
 
 
@@ -126,8 +126,8 @@ def Upload_dataframe_to_diagram_table_throught_sql(curs,df,year,month):
             else:
                 RowList.append(Value)
         RowList[8] = int(RowList[8])
-        sql_query = "Update aa_diagram SET amount_of_units = {0},dynamic_compared_to_previous_month = {1}, dynamic_compared_to_previous_year = {2}" \
-                    " where (dg_year = {3})&(dg_month = {4})& (dg_day = {5})&( vehicle_type_id = '{6}');".format(RowList[2], RowList[5], RowList[9], year, month, RowList[1], RowList[0])
+        sql_query = "Update aa_diagram SET amount_of_units = {0},dynamic_compared_to_previous_month = {1}, dynamic_compared_to_previous_year = {2}, predicted_market_volume = {3}" \
+                    " where (dg_year = {4})&(dg_month = {5})& (dg_day = {6})&( vehicle_type_id = '{7}');".format(RowList[2], RowList[5], RowList[9],RowList[8], year, month, RowList[1], RowList[0])
         curs.execute(sql_query)
 
 
@@ -182,15 +182,15 @@ def logging(filename,message):
     file.close()
 
 if __name__ == "__main__":
-
+    print("Begin")
     try:
         if (len(sys.argv)>4)or(len(sys.argv)<3):raise Exception('Wrong quantity of argv')
-        print(sys.argv[1])
         year = int(sys.argv[1])
         month = int(sys.argv[2])
         if len(sys.argv)==3: region = 1
         elif len(sys.argv)==4: region = int(sys.argv[3])
         #if (sys.argv[2]<1)or (sys.argv[2]>12): raise Exception('Wrong month entered')
+        print("Get argv[]")
     except IndexError:
         logging(logfile_name, "Not enough arguments: 1 argv is year, 2 argv is month")
         quit()
@@ -214,6 +214,7 @@ if __name__ == "__main__":
           database=database
         )
         cursor = Autocon_database.cursor()
+        print("Connect to database")
     except Exception as err:
         logging(logfile_name, "Problem with database connection"+str(err))
         quit()
@@ -225,6 +226,7 @@ if __name__ == "__main__":
         month_transactions_df = Get_dataframe_of_transaction_for_determined_month(cursor,year,month,region)
         if (month_transactions_df.empty): raise Exception('No rows in Transactions table in entered month')
         month_general_df = month_transactions_df
+        print("Selected data from Transactions table")
         # Current_table_of_rating_df = Get_dataframe_of_resulting_rating_table(cursor)
         # Current_table_of_rating_df.fillna(value=numpy.nan, inplace=True)
         # vehicle_type_array = month_transactions_df.Type.unique()
@@ -274,10 +276,9 @@ if __name__ == "__main__":
             previous_month_general_df = Get_dataframe_of_transaction_for_determined_month(cursor, year-1, 12,region)
             cursor.execute("select aa_vehicle_type.title,aa_real_sales.amount_of_units from aa_real_sales join aa_vehicle_type on aa_vehicle_type.id = aa_real_sales.vehicle_type_id where (dg_year = {0})&(dg_month = {1});".format(year-1,12))
             previous_month_volume_of_market = pandas.DataFrame(data=cursor.fetchall(),columns=["Type","Volume_prev_month"])
-
         if (previous_month_general_df.empty):
-            pass
-
+            print("if you see it, previous month transactions are not in table")
+            logging(logfile_name, "No data for previous month")
         else:
             try:
                 cursor.execute("select aa_vehicle_type.title, aa_real_sales.amount_of_units from aa_real_sales join aa_vehicle_type on aa_vehicle_type.id = aa_real_sales.vehicle_type_id where (dg_year = {0})&(dg_month = {1});".format(year - 1, month))
@@ -285,15 +286,17 @@ if __name__ == "__main__":
 
                 previous_month_volume_of_market = Add_sum_rows_of_units_by_period_to_df(df=previous_month_volume_of_market,colum_name_to_sum="Volume_prev_month")
                 previous_year_volume_of_market = Add_sum_rows_of_units_by_period_to_df(df= previous_year_volume_of_market,colum_name_to_sum="Volume_prev_year")
+                print("Selected previous month and year volume and privious month transactions")
             except Exception as err:
                 logging(logfile_name,str(err))
                 raise Exception("Error with select entire volume of market")
 
 
 
-
             df_for_dynamic = previous_month_general_df[["Brand","Period","Type"]].merge(month_general_df[["Brand","Period","Type"]], how = 'inner')
+            print("Comparing actual and previosu month")
             if (df_for_dynamic.empty is False):
+                print("if you see it comparations is not null")
                 df_for_dynamic = df_for_dynamic.merge(previous_month_general_df,  how='left', left_on=["Brand","Period","Type"], right_on = ["Brand","Period","Type"])
                 df_for_dynamic = df_for_dynamic.rename(columns={'Amount':"Previous_month_amount"})
                 df_for_dynamic = df_for_dynamic.merge(month_general_df,  how='left', left_on=["Brand","Period","Type"], right_on = ["Brand","Period","Type"])
@@ -311,7 +314,6 @@ if __name__ == "__main__":
                 sum_of_df_for_dynamic.insert(0, 'Type', 'Sum')
                 sum_of_df_for_dynamic = sum_of_df_for_dynamic.rename(columns={'Sum': "Present_month_amount",'Count': 'Calculated_companies'})
                 df_for_dynamic = df_for_dynamic.append(sum_of_df_for_dynamic,ignore_index=True)
-
                 sum_of_df_for_dynamic_copy = df_for_dynamic_copy_for_prev_month.groupby(['Period']).agg(Sum=('Previous_month_amount', 'sum')).reset_index()
                 sum_of_df_for_dynamic_copy.insert(0, 'Type', 'Sum')
                 sum_of_df_for_dynamic_copy = sum_of_df_for_dynamic_copy.rename(columns={'Sum': "Previous_month_amount"})
@@ -330,18 +332,18 @@ if __name__ == "__main__":
                 df_for_dynamic = df_for_dynamic.merge(previous_year_volume_of_market,  how='left', left_on=["Type"], right_on = ["Type"])
                 df_for_dynamic['Predicted_volume_of_month'] = df_for_dynamic.Volume_prev_month * (df_for_dynamic.Dynamic_by_month +100)/100
                 df_for_dynamic['Predicted_dynamic_prev_year'] = df_for_dynamic.Predicted_volume_of_month / df_for_dynamic.Volume_prev_year *100 - 100
-
+		
                 current_diagram_df = Get_dataframe_of_current_diagram_table(cursor,year,month)
-
                 comparing_result_diagram_df = df_for_dynamic.merge(current_diagram_df, how = 'outer' ,indicator=True)
                 comparing_result_diagram_df = comparing_result_diagram_df.loc[lambda x: x['_merge'] == 'left_only'].drop('_merge',1)
-
+                print("Created dataframe of insert/upload rows in diagram table (can be empty")
                 if (comparing_result_diagram_df.empty==False):
-
+                    print("Dataframe is not empty")
                     list_of_insert_and_upload = Split_df_to_insert_set_and_upload_set_return_list(df_for_split=comparing_result_diagram_df,df_of_existing_rows=current_diagram_df,param_list = ["Period","Type"],type_name=None)
 
                     Insert_df = list_of_insert_and_upload[0]
                     Upload_df = list_of_insert_and_upload[1]
+                    print("Separated insert df and upload df")
                     # Insert_df = comparing_result_diagram_df
                     # Upload_df = comparing_result_diagram_df
                     #
@@ -369,4 +371,3 @@ if __name__ == "__main__":
     finally:
         Autocon_database.close()
         logging(logfile_name, "OK")
-
